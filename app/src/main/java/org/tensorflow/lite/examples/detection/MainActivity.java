@@ -39,6 +39,23 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100) {
+            //Get capture image
+            sourceBitmap= (Bitmap) data.getExtras().get("data");
+            //Set capture  image
+            imageView.setImageBitmap(sourceBitmap);
+            this.cropBitmap = Utils.processBitmap(sourceBitmap, TF_OD_API_INPUT_SIZE);
+
+            this.imageView.setImageBitmap(cropBitmap);
+
+        }
+        initBox();
+
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +87,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        cameraButton.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, DetectorActivity.class)));
 
+        cameraButton.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, DetectorActivity.class)));
         detectButton.setOnClickListener(v -> {
             Handler handler = new Handler();
 
@@ -81,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         handleResult(cropBitmap, results);
+
                     }
                 });
             }).start();
@@ -88,21 +106,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 100) {
-            //Get capture image
-            Bitmap captureImage = (Bitmap) data.getExtras().get("data");
-            //Set capture  image
-            imageView.setImageBitmap(captureImage);
-
-        }
-        initBox();
 
     }
+
+
+
     //   imageView.cropBitmap = Utils.processBitmap(sourceBitmap, TF_OD_API_INPUT_SIZE);
     // this.sourceBitmap = Utils.getBitmapFromAsset(MainActivity.this, "kite.jpg");
 
