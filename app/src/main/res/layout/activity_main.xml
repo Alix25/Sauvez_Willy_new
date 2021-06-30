@@ -12,6 +12,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Camera"
+        android:layout_marginStart="200dp"
+        android:layout_marginBottom="126dp"
         app:layout_constraintBottom_toBottomOf="@+id/detectButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.655"
@@ -23,12 +25,24 @@
         android:id="@+id/detectButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
+        android:layout_marginStart="10dp"
         android:layout_marginBottom="126dp"
         android:text="Detect"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <Button
+        android:id="@+id/takePictureButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="150dp"
+        android:layout_marginBottom="126dp"
+        android:text="Take a picture"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
 
     <ImageView
         android:id="@+id/imageView"
@@ -41,6 +55,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@drawable/kite" />
 
+
     <org.tensorflow.lite.examples.detection.customview.OverlayView
         android:id="@+id/tracking_overlay"
         android:layout_width="416dp"
@@ -48,5 +63,38 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        tools:context="org.tensorflow.demo.CameraActivity">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/tfe_color_accent">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+               />// android:src="@drawable/tfl2_logo.png" />
+
+            <TextView
+                android:id="@+id/frame"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="sans-serif-condensed"
+                android:lineSpacingExtra="10sp"
+                android:text="Sauvez Willy ! "
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </androidx.appcompat.widget.Toolbar>
+    </FrameLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

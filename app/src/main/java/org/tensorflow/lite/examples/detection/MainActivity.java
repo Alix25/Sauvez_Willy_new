@@ -1,9 +1,14 @@
 package org.tensorflow.lite.examples.detection;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -12,6 +17,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -41,7 +47,28 @@ public class MainActivity extends AppCompatActivity {
 
         cameraButton = findViewById(R.id.cameraButton);
         detectButton = findViewById(R.id.detectButton);
+        takePictureButton = findViewById(R.id.takePictureButton);
         imageView = findViewById(R.id.imageView);
+        //request for cam
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                            Manifest.permission.CAMERA
+                    },
+                    100);
+
+        }
+        takePictureButton.setOnClickListener(new View.OnClickListener() {
+
+            //open
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, 100);
+
+            }
+
+        });
+
 
         cameraButton.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, DetectorActivity.class)));
 
@@ -59,14 +86,35 @@ public class MainActivity extends AppCompatActivity {
             }).start();
 
         });
-        this.sourceBitmap = Utils.getBitmapFromAsset(MainActivity.this, "kite.jpg");
 
-        this.cropBitmap = Utils.processBitmap(sourceBitmap, TF_OD_API_INPUT_SIZE);
 
-        this.imageView.setImageBitmap(cropBitmap);
-
-        initBox();
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100) {
+            //Get capture image
+            Bitmap captureImage = (Bitmap) data.getExtras().get("data");
+            //Set capture  image
+            imageView.setImageBitmap(captureImage);
+
+        }
+        initBox();
+
+    }
+    //   imageView.cropBitmap = Utils.processBitmap(sourceBitmap, TF_OD_API_INPUT_SIZE);
+    // this.sourceBitmap = Utils.getBitmapFromAsset(MainActivity.this, "kite.jpg");
+
+    // this.cropBitmap = Utils.processBitmap(sourceBitmap, TF_OD_API_INPUT_SIZE);
+
+    // this.imageView.setImageBitmap(cropBitmap);
+
+
+
+
+
+
 
     private static final Logger LOGGER = new Logger();
 
@@ -74,9 +122,9 @@ public class MainActivity extends AppCompatActivity {
 
     private static final boolean TF_OD_API_IS_QUANTIZED = false;
 
-    private static final String TF_OD_API_MODEL_FILE = "yolov4-tiny-416.tflite";
+    private static final String TF_OD_API_MODEL_FILE = "yolov4-416-fp32.tflite";
 
-    private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/_darknet.labels";
+    private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/coco.txt";
 
     // Minimum detection confidence to track a detection.
     private static final boolean MAINTAIN_ASPECT = false;
@@ -95,10 +143,10 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap sourceBitmap;
     private Bitmap cropBitmap;
 
-    private Button cameraButton, detectButton;
+    private Button cameraButton, detectButton, takePictureButton;
     private ImageView imageView;
 
-    private void initBox() {
+    public void initBox() {
         previewHeight = TF_OD_API_INPUT_SIZE;
         previewWidth = TF_OD_API_INPUT_SIZE;
         frameToCropTransform =
